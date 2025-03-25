@@ -620,6 +620,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Disclaimer"),
         "settingsDistanceLabel":
             MessageLookupByLibrary.simpleMessage("Distance"),
+        "settingsExportDataDialogContent": MessageLookupByLibrary.simpleMessage(
+            "Would you like to export your data?"),
+        "settingsExportDataDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Export Data"),
+        "settingsExportDataLabel":
+            MessageLookupByLibrary.simpleMessage("Export Data"),
         "settingsImperialLabel":
             MessageLookupByLibrary.simpleMessage("Imperial (lbs, ft, oz)"),
         "settingsLabel": MessageLookupByLibrary.simpleMessage("Settings"),

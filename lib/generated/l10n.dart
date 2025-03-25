@@ -730,6 +730,36 @@ class S {
     );
   }
 
+  /// `Export Data`
+  String get settingsExportDataLabel {
+    return Intl.message(
+      'Export Data',
+      name: 'settingsExportDataLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export Data`
+  String get settingsExportDataDialogTitle {
+    return Intl.message(
+      'Export Data',
+      name: 'settingsExportDataDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Would you like to export your data?`
+  String get settingsExportDataDialogContent {
+    return Intl.message(
+      'Would you like to export your data?',
+      name: 'settingsExportDataDialogContent',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OpenNutriTracker is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nThe application is still under development. Errors, bugs and crashes may occur.`
   String get disclaimerText {
     return Intl.message(

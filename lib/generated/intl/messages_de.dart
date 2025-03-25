@@ -631,6 +631,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Hinweis"),
         "settingsDistanceLabel":
             MessageLookupByLibrary.simpleMessage("Entfernung"),
+        "settingsExportDataDialogContent": MessageLookupByLibrary.simpleMessage(
+            "Möchtest du deine Daten exportieren?"),
+        "settingsExportDataDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Daten exportieren"),
+        "settingsExportDataLabel":
+            MessageLookupByLibrary.simpleMessage("Daten exportieren"),
         "settingsLabel": MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "settingsLicensesLabel":
             MessageLookupByLibrary.simpleMessage("Lizenzen"),

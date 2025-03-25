@@ -387,5 +387,8 @@
   "paSkiingGeneral": "Skifahren",
   "paSkiingGeneralDesc": "allgemein",
   "paSnowShovingModerate": "Schnee schaufeln",
-  "paSnowShovingModerateDesc": "manuell, mäßige Anstrengung"
+  "paSnowShovingModerateDesc": "manuell, mäßige Anstrengung",
+  "settingsExportDataLabel": "Daten exportieren",
+  "settingsExportDataDialogTitle": "Daten exportieren",
+  "settingsExportDataDialogContent": "Möchtest du deine Daten exportieren?"
 }

@@ -93,6 +93,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _showPrivacyDialog(context, state.sendAnonymousData),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.download_outlined),
+                  title: Text(S.of(context).settingsExportDataLabel),
+                  onTap: () => _showExportDialog(context),
+                ),
+                ListTile(
                   leading: const Icon(Icons.error_outline_outlined),
                   title: Text(S.of(context).settingAboutLabel),
                   onTap: () => _showAboutDialog(context),
@@ -392,5 +397,87 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SnackBar(content: Text(S.of(context).errorOpeningBrowser)));
       }
     }
+  }
+
+  void _showExportDialog(BuildContext context) {
+    DateTime startDate = DateTime.now().subtract(const Duration(days: 30));
+    DateTime endDate = DateTime.now();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(S.of(context).settingsExportDataDialogTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(S.of(context).settingsExportDataDialogContent),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: startDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+                            if (picked != null && picked != startDate) {
+                              setState(() {
+                                startDate = picked;
+                              });
+                            }
+                          },
+                          child: Text(
+                              'Start: ${startDate.toLocal().toString().split(' ')[0]}'),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: endDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+                            if (picked != null && picked != endDate) {
+                              setState(() {
+                                endDate = picked;
+                              });
+                            }
+                          },
+                          child: Text(
+                              'End: ${endDate.toLocal().toString().split(' ')[0]}'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(S.of(context).dialogCancelLabel),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Implement actual export functionality using startDate and endDate
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(S.of(context).dialogOKLabel),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
