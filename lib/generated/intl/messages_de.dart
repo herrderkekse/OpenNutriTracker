@@ -136,6 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Produkt nicht gefunden"),
         "fatLabel": MessageLookupByLibrary.simpleMessage("Fett"),
         "fiberLabel": MessageLookupByLibrary.simpleMessage("Ballaststoffe"),
+        "flOzUnit": MessageLookupByLibrary.simpleMessage("fl.oz"),
         "genderFemaleLabel": MessageLookupByLibrary.simpleMessage("♀ weiblich"),
         "genderLabel": MessageLookupByLibrary.simpleMessage("Geschlecht"),
         "genderMaleLabel": MessageLookupByLibrary.simpleMessage("♂ männlich"),
@@ -191,6 +192,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Keine kürzlich hinzugefügten Mahlzeiten"),
         "noResultsFound":
             MessageLookupByLibrary.simpleMessage("Keine Ergebnisse gefunden"),
+        "notAvailableLabel": MessageLookupByLibrary.simpleMessage("N/A"),
         "nothingAddedLabel":
             MessageLookupByLibrary.simpleMessage("Nichts hinzugefügt"),
         "nutritionInfoLabel":
@@ -262,6 +264,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ihr Kalorienziel:"),
         "onboardingYourMacrosGoalLabel": MessageLookupByLibrary.simpleMessage(
             "Ihr Ziel für Makronährstoffe:"),
+        "ozUnit": MessageLookupByLibrary.simpleMessage("oz"),
         "paAmericanFootballGeneral":
             MessageLookupByLibrary.simpleMessage("American Football"),
         "paAmericanFootballGeneralDesc":
@@ -620,6 +623,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Gewicht auswählen"),
         "sendAnonymousUserData": MessageLookupByLibrary.simpleMessage(
             "Anonyme Nutzungsdaten senden?"),
+        "servingLabel": MessageLookupByLibrary.simpleMessage("Portion"),
         "servingSizeLabelImperial":
             MessageLookupByLibrary.simpleMessage("Portionsgröße (oz/fl oz)"),
         "servingSizeLabelMetric":

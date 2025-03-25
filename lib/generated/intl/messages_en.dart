@@ -186,6 +186,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No meals recently added"),
         "noResultsFound":
             MessageLookupByLibrary.simpleMessage("No results found"),
+        "notAvailableLabel": MessageLookupByLibrary.simpleMessage("N/A"),
         "nothingAddedLabel":
             MessageLookupByLibrary.simpleMessage("Nothing added"),
         "nutritionInfoLabel":
@@ -609,6 +610,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Select Weight"),
         "sendAnonymousUserData":
             MessageLookupByLibrary.simpleMessage("Send anonymous usage data"),
+        "servingLabel": MessageLookupByLibrary.simpleMessage("Serving"),
         "servingSizeLabelImperial":
             MessageLookupByLibrary.simpleMessage("Serving size (oz/fl oz)"),
         "servingSizeLabelMetric":
