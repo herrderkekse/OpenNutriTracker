@@ -71,8 +71,7 @@ dependencies:
 
   supabase_flutter: ^2.8.2
 
-  csv: ^5.0.1
-  share_plus: ^7.1.0  # Use the latest stable version
+  share_plus: ^7.1.0
 
 dev_dependencies:
   flutter_test:
