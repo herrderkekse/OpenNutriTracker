@@ -50,6 +50,7 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
   envied: ^1.0.0
+  open_file: ^3.3.2
 
   flutter_bloc: ^8.1.6
   equatable: ^2.0.7
@@ -69,6 +70,9 @@ dependencies:
   sentry_flutter: ^8.11.2
 
   supabase_flutter: ^2.8.2
+
+  csv: ^5.0.1
+  share_plus: ^7.1.0  # Use the latest stable version
 
 dev_dependencies:
   flutter_test:

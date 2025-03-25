@@ -120,6 +120,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "editMealLabel":
             MessageLookupByLibrary.simpleMessage("Mahlzeit bearbeiten"),
         "energyLabel": MessageLookupByLibrary.simpleMessage("Energie"),
+        "errorExportingData": MessageLookupByLibrary.simpleMessage(
+            "Beim Exportieren der Daten ist ein Fehler aufgetreten"),
         "errorFetchingProductData": MessageLookupByLibrary.simpleMessage(
             "Fehler beim Abrufen von Produktinformationen"),
         "errorLoadingActivities": MessageLookupByLibrary.simpleMessage(

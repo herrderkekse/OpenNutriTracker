@@ -2,15 +2,23 @@
     package="com.opennutritracker.ont.opennutritracker">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Provide required visibility configuration for API level 30 and above -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
+            <data android:mimeType="*/*" />
         </intent>
         <intent>
             <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
             <data android:mimeType="*/*" />
         </intent>
     </queries>

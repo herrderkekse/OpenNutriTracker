@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
+import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
 import 'package:opennutritracker/core/presentation/widgets/app_banner_version.dart';
 import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
 import 'package:opennutritracker/core/utils/app_const.dart';
@@ -11,11 +12,13 @@ import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_b
 import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
 import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:opennutritracker/features/settings/domain/usecase/export_data_usecase.dart';
 import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:opennutritracker/features/settings/presentation/widgets/calculations_dialog.dart';
 
@@ -467,9 +470,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text(S.of(context).dialogCancelLabel),
                 ),
                 TextButton(
-                  onPressed: () {
-                    // TODO: Implement actual export functionality using startDate and endDate
-                    Navigator.of(context).pop();
+                  onPressed: () async {
+                    try {
+                      final exportDataUsecase =
+                          ExportDataUsecase(locator<GetIntakeUsecase>());
+                      final filePath = await exportDataUsecase.exportFoodData(
+                          startDate, endDate);
+
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        await Share.shareXFiles(
+                          [XFile(filePath)],
+                          subject: 'Food Diary Export',
+                          sharePositionOrigin: Rect.fromLTWH(
+                              0,
+                              0,
+                              MediaQuery.of(context).size.width,
+                              MediaQuery.of(context).size.height / 2),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(S.of(context).errorExportingData),
+                          ),
+                        );
+                      }
+                    }
                   },
                   child: Text(S.of(context).dialogOKLabel),
                 ),

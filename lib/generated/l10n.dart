@@ -4070,6 +4070,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Error while exporting data`
+  String get errorExportingData {
+    return Intl.message(
+      'Error while exporting data',
+      name: 'errorExportingData',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -390,5 +390,6 @@
   "paSnowShovingModerateDesc": "manuell, mäßige Anstrengung",
   "settingsExportDataLabel": "Daten exportieren",
   "settingsExportDataDialogTitle": "Daten exportieren",
-  "settingsExportDataDialogContent": "Möchtest du deine Daten exportieren?"
+  "settingsExportDataDialogContent": "Möchtest du deine Daten exportieren?",
+  "errorExportingData": "Beim Exportieren der Daten ist ein Fehler aufgetreten"
 }

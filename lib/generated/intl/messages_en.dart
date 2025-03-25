@@ -118,6 +118,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Edit item"),
         "editMealLabel": MessageLookupByLibrary.simpleMessage("Edit meal"),
         "energyLabel": MessageLookupByLibrary.simpleMessage("energy"),
+        "errorExportingData":
+            MessageLookupByLibrary.simpleMessage("Error while exporting data"),
         "errorFetchingProductData": MessageLookupByLibrary.simpleMessage(
             "Error while fetching product data"),
         "errorLoadingActivities": MessageLookupByLibrary.simpleMessage(

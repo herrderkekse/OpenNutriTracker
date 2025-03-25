@@ -401,5 +401,6 @@
   "paSkiingGeneral": "skiing",
   "paSkiingGeneralDesc": "general",
   "paSnowShovingModerate": "snow shoveling",
-  "paSnowShovingModerateDesc": "by hand, moderate effort"
+  "paSnowShovingModerateDesc": "by hand, moderate effort",
+  "errorExportingData": "Error while exporting data"
 }
