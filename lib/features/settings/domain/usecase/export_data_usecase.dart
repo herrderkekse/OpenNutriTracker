@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:opennutritracker/features/meal_detail/presentation/bloc/meal_detail_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
@@ -43,13 +44,22 @@ class ExportDataUsecase {
     ].join(','));
 
     for (var intake in allIntakes) {
+      // Get the correct unit based on the meal properties
+      String exportUnit = intake.unit;
+      if (intake.unit == UnitDropdownItem.serving.toString() &&
+          intake.meal.servingUnit != null) {
+        exportUnit = intake.meal.servingUnit!;
+      } else if (intake.unit == UnitDropdownItem.gml.toString()) {
+        exportUnit = intake.meal.isLiquid ? 'ml' : 'g';
+      }
+
       csv.writeln([
         _escapeCSVField(intake.id),
         intake.dateTime.toString().split(' ')[0],
         intake.type.toString().split('.').last,
         _escapeCSVField(intake.meal.name ?? ''),
         intake.amount,
-        _escapeCSVField(intake.unit),
+        _escapeCSVField(exportUnit),
         intake.meal.nutriments.energyKcal100,
         intake.meal.nutriments.carbohydrates100,
         intake.meal.nutriments.fat100,
