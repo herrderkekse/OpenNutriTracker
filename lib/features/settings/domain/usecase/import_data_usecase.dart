@@ -5,15 +5,11 @@ import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
-import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_tracked_day_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
-import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
-import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
 
 class ImportDataUsecase {
   final AddIntakeUsecase _addIntakeUsecase;
@@ -76,11 +72,11 @@ class ImportDataUsecase {
         );
 
         final intake = IntakeEntity(
-          id: importId, // Use the ID from CSV instead of generating new one
+          id: importId,
           dateTime: date,
           type: mealType,
           meal: MealEntity(
-            code: importId, // Use same ID for consistency
+            code: importId,
             name: row[3].toString(),
             url: null,
             mealQuantity: row[4].toString(),
@@ -110,17 +106,8 @@ class ImportDataUsecase {
         await _updateTrackedDay(intake, date);
         imported++;
       }
-
-      developer.log(
-          'Import completed successfully. Imported: $imported, Skipped: $skipped');
-
-      // Add this at the end of the import process
-      locator<DiaryBloc>().add(const LoadDiaryYearEvent());
-      locator<CalendarDayBloc>().add(LoadCalendarDayEvent(DateTime.now()));
-      locator<HomeBloc>().add(const LoadItemsEvent());
-    } catch (e, stackTrace) {
-      developer.log('Error during import: $e\n$stackTrace');
-      rethrow;
+    } catch (e) {
+      throw Exception('Failed to import data: $e');
     }
   }
 

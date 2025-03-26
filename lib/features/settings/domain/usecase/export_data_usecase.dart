@@ -9,10 +9,8 @@ class ExportDataUsecase {
   ExportDataUsecase(this._getIntakeUsecase);
 
   Future<String> exportFoodData(DateTime startDate, DateTime endDate) async {
-    // Get all intake data between dates
     List<IntakeEntity> allIntakes = [];
 
-    // Iterate through each day in the date range
     for (DateTime date = startDate;
         date.isBefore(endDate.add(const Duration(days: 1)));
         date = date.add(const Duration(days: 1))) {
@@ -24,7 +22,6 @@ class ExportDataUsecase {
       allIntakes.addAll([...breakfast, ...lunch, ...dinner, ...snacks]);
     }
 
-    // Create CSV data
     final StringBuffer csv = StringBuffer();
 
     // Add header row
@@ -35,13 +32,16 @@ class ExportDataUsecase {
       'Food Name',
       'Amount',
       'Unit',
-      'Calories (kcal)',
-      'Carbs (g)',
-      'Fats (g)',
-      'Proteins (g)'
+      'Energy per 100g (kcal)',
+      'Carbs per 100g (g)',
+      'Fats per 100g (g)',
+      'Proteins per 100g (g)',
+      'Total Calories (kcal)',
+      'Total Carbs (g)',
+      'Total Fats (g)',
+      'Total Proteins (g)'
     ].join(','));
 
-    // Add data rows
     for (var intake in allIntakes) {
       csv.writeln([
         _escapeCSVField(intake.id),
@@ -50,6 +50,10 @@ class ExportDataUsecase {
         _escapeCSVField(intake.meal.name ?? ''),
         intake.amount,
         _escapeCSVField(intake.unit),
+        intake.meal.nutriments.energyKcal100,
+        intake.meal.nutriments.carbohydrates100,
+        intake.meal.nutriments.fat100,
+        intake.meal.nutriments.proteins100,
         intake.totalKcal,
         intake.totalCarbsGram,
         intake.totalFatsGram,
@@ -57,7 +61,6 @@ class ExportDataUsecase {
       ].join(','));
     }
 
-    // Save to file
     final directory = await getApplicationDocumentsDirectory();
     final fileName = 'food_diary_${DateTime.now().millisecondsSinceEpoch}.csv';
     final file = File('${directory.path}/$fileName');
