@@ -760,6 +760,56 @@ class S {
     );
   }
 
+  /// `Import Data`
+  String get settingsImportDataLabel {
+    return Intl.message(
+      'Import Data',
+      name: 'settingsImportDataLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import Data`
+  String get settingsImportDataDialogTitle {
+    return Intl.message(
+      'Import Data',
+      name: 'settingsImportDataDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a CSV file to import your data. The file should match the export format.`
+  String get settingsImportDataDialogContent {
+    return Intl.message(
+      'Select a CSV file to import your data. The file should match the export format.',
+      name: 'settingsImportDataDialogContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data imported successfully`
+  String get successImportingData {
+    return Intl.message(
+      'Data imported successfully',
+      name: 'successImportingData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error importing data`
+  String get errorImportingData {
+    return Intl.message(
+      'Error importing data',
+      name: 'errorImportingData',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OpenNutriTracker is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended.\n\n\nThe application is still under development. Errors, bugs and crashes may occur.`
   String get disclaimerText {
     return Intl.message(

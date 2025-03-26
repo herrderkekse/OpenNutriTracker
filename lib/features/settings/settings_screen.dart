@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
+import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
 import 'package:opennutritracker/core/presentation/widgets/app_banner_version.dart';
 import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
@@ -21,6 +22,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:opennutritracker/features/settings/presentation/widgets/calculations_dialog.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:opennutritracker/features/settings/domain/usecase/import_data_usecase.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -94,6 +97,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: Text(S.of(context).settingsPrivacySettings),
                   onTap: () =>
                       _showPrivacyDialog(context, state.sendAnonymousData),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.upload_outlined),
+                  title: Text(S.of(context).settingsImportDataLabel),
+                  onTap: () => _showImportDialog(context),
                 ),
                 ListTile(
                   leading: const Icon(Icons.download_outlined),
@@ -504,6 +512,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showImportDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(S.of(context).settingsImportDataDialogTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(S.of(context).settingsImportDataDialogContent),
+              const SizedBox(height: 16),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(S.of(context).dialogCancelLabel),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['csv'],
+                  );
+
+                  if (result != null && result.files.single.path != null) {
+                    final importDataUsecase =
+                        ImportDataUsecase(locator<AddIntakeUsecase>());
+                    await importDataUsecase
+                        .importFoodData(result.files.single.path!);
+
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(S.of(context).successImportingData),
+                        ),
+                      );
+                      // Refresh both Home and Diary pages
+                      locator<HomeBloc>().add(const LoadItemsEvent());
+                      locator<DiaryBloc>().add(const LoadDiaryYearEvent());
+                      locator<CalendarDayBloc>()
+                          .add(LoadCalendarDayEvent(DateTime.now()));
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(S.of(context).errorImportingData),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(S.of(context).dialogOKLabel),
+            ),
+          ],
         );
       },
     );

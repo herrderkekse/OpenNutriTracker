@@ -122,6 +122,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Error while exporting data"),
         "errorFetchingProductData": MessageLookupByLibrary.simpleMessage(
             "Error while fetching product data"),
+        "errorImportingData":
+            MessageLookupByLibrary.simpleMessage("Error importing data"),
         "errorLoadingActivities": MessageLookupByLibrary.simpleMessage(
             "Error while loading activities"),
         "errorMealSave": MessageLookupByLibrary.simpleMessage(
@@ -632,6 +634,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Export Data"),
         "settingsImperialLabel":
             MessageLookupByLibrary.simpleMessage("Imperial (lbs, ft, oz)"),
+        "settingsImportDataDialogContent": MessageLookupByLibrary.simpleMessage(
+            "Select a CSV file to import your data. The file should match the export format."),
+        "settingsImportDataDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Import Data"),
+        "settingsImportDataLabel":
+            MessageLookupByLibrary.simpleMessage("Import Data"),
         "settingsLabel": MessageLookupByLibrary.simpleMessage("Settings"),
         "settingsLicensesLabel":
             MessageLookupByLibrary.simpleMessage("Licenses"),
@@ -656,6 +664,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "snackExample": MessageLookupByLibrary.simpleMessage(
             "e.g. apple, ice cream, chocolate ..."),
         "snackLabel": MessageLookupByLibrary.simpleMessage("Snack"),
+        "successImportingData":
+            MessageLookupByLibrary.simpleMessage("Data imported successfully"),
         "sugarLabel": MessageLookupByLibrary.simpleMessage("sugar"),
         "suppliedLabel": MessageLookupByLibrary.simpleMessage("supplied"),
         "unitLabel": MessageLookupByLibrary.simpleMessage("Unit"),
