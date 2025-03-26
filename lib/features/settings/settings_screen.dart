@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
@@ -546,8 +547,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
 
                   if (result != null && result.files.single.path != null) {
-                    final importDataUsecase =
-                        ImportDataUsecase(locator<AddIntakeUsecase>());
+                    final importDataUsecase = ImportDataUsecase(
+                      locator<AddIntakeUsecase>(),
+                      locator<IntakeDataSource>(),
+                    );
                     await importDataUsecase
                         .importFoodData(result.files.single.path!);
 

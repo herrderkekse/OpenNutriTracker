@@ -1,29 +1,28 @@
 import 'dart:io';
 import 'dart:developer' as developer;
 import 'package:csv/csv.dart';
+import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
-import 'package:opennutritracker/core/utils/id_generator.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments_entity.dart';
 
 class ImportDataUsecase {
   final AddIntakeUsecase _addIntakeUsecase;
+  final IntakeDataSource _intakeDataSource;
 
-  ImportDataUsecase(this._addIntakeUsecase);
+  ImportDataUsecase(this._addIntakeUsecase, this._intakeDataSource);
 
   Future<void> importFoodData(String filePath) async {
     try {
       final input = File(filePath).readAsStringSync();
       developer.log('Reading CSV file: $filePath');
-      developer.log('File contents: $input'); // Debug log to see raw content
+      developer.log('File contents: $input');
 
-      // Configure CSV parser to handle different line endings
       final csvConverter = CsvToListConverter(
-        shouldParseNumbers:
-            false, // Parse numbers manually to avoid precision issues
-        eol: '\n', // Explicitly set line ending
+        shouldParseNumbers: false,
+        eol: '\n',
       );
 
       final fields = csvConverter.convert(input);
@@ -33,57 +32,71 @@ class ImportDataUsecase {
         throw Exception('CSV file is empty');
       }
 
-      // Log headers to verify CSV structure
       developer.log('CSV Headers: ${fields[0]}');
+
+      int imported = 0;
+      int skipped = 0;
 
       // Skip header row
       for (var i = 1; i < fields.length; i++) {
         final row = fields[i];
         developer.log('Processing row $i: $row');
 
-        final date = DateTime.parse(row[0].toString().trim());
+        final importId = row[0].toString().trim();
+
+        // Check if intake already exists
+        final existingIntake = await _intakeDataSource.getIntakeById(importId);
+        if (existingIntake != null) {
+          developer.log('Skipping existing intake with ID: $importId');
+          skipped++;
+          continue;
+        }
+
+        final date = DateTime.parse(row[1].toString().trim());
         final mealType = IntakeTypeEntity.values.firstWhere(
           (type) =>
               type.toString().split('.').last.toLowerCase() ==
-              row[1].toString().toLowerCase(),
+              row[2].toString().toLowerCase(),
         );
 
         final intake = IntakeEntity(
+          id: importId, // Use the ID from CSV instead of generating new one
           dateTime: date,
           type: mealType,
           meal: MealEntity(
-            code: IdGenerator.getUniqueID(),
-            name: row[2].toString(),
+            code: importId, // Use same ID for consistency
+            name: row[3].toString(),
             url: null,
-            mealQuantity: row[3].toString(),
-            mealUnit: row[4].toString(),
+            mealQuantity: row[4].toString(),
+            mealUnit: row[5].toString(),
             servingQuantity: null,
-            servingUnit: row[4].toString(),
+            servingUnit: row[5].toString(),
             servingSize: '',
             nutriments: MealNutrimentsEntity(
-              energyKcal100: double.parse(row[5].toString()),
-              carbohydrates100: double.parse(row[6].toString()),
-              fat100: double.parse(row[7].toString()),
-              proteins100: double.parse(row[8].toString()),
+              energyKcal100: double.parse(row[6].toString()),
+              carbohydrates100: double.parse(row[7].toString()),
+              fat100: double.parse(row[8].toString()),
+              proteins100: double.parse(row[9].toString()),
               sugars100: null,
               saturatedFat100: null,
               fiber100: null,
             ),
             source: MealSourceEntity.custom,
           ),
-          amount: double.parse(row[3].toString()),
-          unit: row[4].toString(),
-          id: IdGenerator.getUniqueID(),
+          amount: double.parse(row[4].toString()),
+          unit: row[5].toString(),
         );
 
         developer.log(
             'Created IntakeEntity: ${intake.id} - ${intake.meal.name} - ${intake.dateTime}');
 
         await _addIntakeUsecase.addIntake(intake);
+        imported++;
         developer.log('Successfully added intake to database');
       }
 
-      developer.log('Import completed successfully');
+      developer.log(
+          'Import completed successfully. Imported: $imported, Skipped: $skipped');
     } catch (e, stackTrace) {
       developer.log('Error during import: $e\n$stackTrace');
       rethrow;

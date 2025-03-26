@@ -29,6 +29,7 @@ class ExportDataUsecase {
 
     // Add header row
     csv.writeln([
+      'ID',
       'Date',
       'Meal Type',
       'Food Name',
@@ -43,6 +44,7 @@ class ExportDataUsecase {
     // Add data rows
     for (var intake in allIntakes) {
       csv.writeln([
+        _escapeCSVField(intake.id),
         intake.dateTime.toString().split(' ')[0],
         intake.type.toString().split('.').last,
         _escapeCSVField(intake.meal.name ?? ''),
