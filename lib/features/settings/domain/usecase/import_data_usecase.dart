@@ -76,27 +76,42 @@ class ImportDataUsecase {
           dateTime: date,
           type: mealType,
           meal: MealEntity(
-            code: importId,
+            code: row[18].toString().isEmpty
+                ? importId
+                : row[18].toString(), // Use barcode if available
             name: row[3].toString(),
-            url: null,
-            mealQuantity: row[4].toString(),
-            mealUnit: row[5].toString(),
-            servingQuantity: null,
-            servingUnit: row[5].toString(),
-            servingSize: '',
+            brands: row[4].toString().isEmpty ? null : row[4].toString(),
+            url: row[19].toString().isEmpty ? null : row[19].toString(),
+            mealQuantity: row[5].toString(),
+            mealUnit: row[6].toString(),
+            servingQuantity: row[22].toString().isEmpty
+                ? null
+                : double.tryParse(row[22].toString()),
+            servingUnit: row[23].toString().isEmpty ? null : row[23].toString(),
+            servingSize: row[24].toString().isEmpty ? '' : row[24].toString(),
+            thumbnailImageUrl:
+                row[20].toString().isEmpty ? null : row[20].toString(),
+            mainImageUrl:
+                row[21].toString().isEmpty ? null : row[21].toString(),
             nutriments: MealNutrimentsEntity(
-              energyKcal100: double.parse(row[6].toString()),
-              carbohydrates100: double.parse(row[7].toString()),
-              fat100: double.parse(row[8].toString()),
-              proteins100: double.parse(row[9].toString()),
-              sugars100: null,
-              saturatedFat100: null,
-              fiber100: null,
+              energyKcal100: double.parse(row[7].toString()),
+              carbohydrates100: double.parse(row[8].toString()),
+              fat100: double.parse(row[9].toString()),
+              proteins100: double.parse(row[10].toString()),
+              sugars100: row[11].toString().isEmpty
+                  ? null
+                  : double.tryParse(row[11].toString()),
+              saturatedFat100: row[12].toString().isEmpty
+                  ? null
+                  : double.tryParse(row[12].toString()),
+              fiber100: row[13].toString().isEmpty
+                  ? null
+                  : double.tryParse(row[13].toString()),
             ),
-            source: MealSourceEntity.custom,
+            source: _parseSource(row[25].toString()),
           ),
-          amount: double.parse(row[4].toString()),
-          unit: row[5].toString(),
+          amount: double.parse(row[5].toString()),
+          unit: row[6].toString(),
         );
 
         developer.log(
@@ -133,5 +148,18 @@ class ImportDataUsecase {
         carbsTracked: intakeEntity.totalCarbsGram,
         fatTracked: intakeEntity.totalFatsGram,
         proteinTracked: intakeEntity.totalProteinsGram);
+  }
+
+  MealSourceEntity _parseSource(String source) {
+    switch (source.toLowerCase()) {
+      case 'off':
+        return MealSourceEntity.off;
+      case 'fdc':
+        return MealSourceEntity.fdc;
+      case 'custom':
+        return MealSourceEntity.custom;
+      default:
+        return MealSourceEntity.custom;
+    }
   }
 }

@@ -25,26 +25,38 @@ class ExportDataUsecase {
 
     final StringBuffer csv = StringBuffer();
 
-    // Add header row
+    // Enhanced header row with all relevant fields
     csv.writeln([
       'ID',
       'Date',
       'Meal Type',
       'Food Name',
+      'Brands',
       'Amount',
       'Unit',
       'Energy per 100g (kcal)',
       'Carbs per 100g (g)',
       'Fats per 100g (g)',
       'Proteins per 100g (g)',
+      'Sugars per 100g (g)',
+      'Saturated Fat per 100g (g)',
+      'Fiber per 100g (g)',
       'Total Calories (kcal)',
       'Total Carbs (g)',
       'Total Fats (g)',
-      'Total Proteins (g)'
+      'Total Proteins (g)',
+      'Barcode',
+      'Product URL',
+      'Thumbnail Image URL',
+      'Main Image URL',
+      'Serving Quantity',
+      'Serving Unit',
+      'Serving Size',
+      'Source',
+      'Is Liquid'
     ].join(','));
 
     for (var intake in allIntakes) {
-      // Get the correct unit based on the meal properties
       String exportUnit = intake.unit;
       if (intake.unit == UnitDropdownItem.serving.toString() &&
           intake.meal.servingUnit != null) {
@@ -58,16 +70,29 @@ class ExportDataUsecase {
         intake.dateTime.toString().split(' ')[0],
         intake.type.toString().split('.').last,
         _escapeCSVField(intake.meal.name ?? ''),
+        _escapeCSVField(intake.meal.brands ?? ''),
         intake.amount,
         _escapeCSVField(exportUnit),
         intake.meal.nutriments.energyKcal100,
         intake.meal.nutriments.carbohydrates100,
         intake.meal.nutriments.fat100,
         intake.meal.nutriments.proteins100,
+        intake.meal.nutriments.sugars100 ?? '',
+        intake.meal.nutriments.saturatedFat100 ?? '',
+        intake.meal.nutriments.fiber100 ?? '',
         intake.totalKcal,
         intake.totalCarbsGram,
         intake.totalFatsGram,
-        intake.totalProteinsGram
+        intake.totalProteinsGram,
+        _escapeCSVField(intake.meal.code ?? ''),
+        _escapeCSVField(intake.meal.url ?? ''),
+        _escapeCSVField(intake.meal.thumbnailImageUrl ?? ''),
+        _escapeCSVField(intake.meal.mainImageUrl ?? ''),
+        intake.meal.servingQuantity ?? '',
+        _escapeCSVField(intake.meal.servingUnit ?? ''),
+        _escapeCSVField(intake.meal.servingSize ?? ''),
+        intake.meal.source.toString().split('.').last,
+        intake.meal.isLiquid ? 'true' : 'false'
       ].join(','));
     }
 
