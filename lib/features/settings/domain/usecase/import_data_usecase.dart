@@ -5,14 +5,30 @@ import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
+import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments_entity.dart';
+import 'package:opennutritracker/core/domain/usecase/add_tracked_day_usecase.dart';
+import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
+import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
+import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_bloc.dart';
+import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
+import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
 
 class ImportDataUsecase {
   final AddIntakeUsecase _addIntakeUsecase;
   final IntakeDataSource _intakeDataSource;
+  final AddTrackedDayUsecase _addTrackedDayUsecase;
+  final GetKcalGoalUsecase _getKcalGoalUsecase;
+  final GetMacroGoalUsecase _getMacroGoalUsecase;
 
-  ImportDataUsecase(this._addIntakeUsecase, this._intakeDataSource);
+  ImportDataUsecase(
+    this._addIntakeUsecase,
+    this._intakeDataSource,
+    this._addTrackedDayUsecase,
+    this._getKcalGoalUsecase,
+    this._getMacroGoalUsecase,
+  );
 
   Future<void> importFoodData(String filePath) async {
     try {
@@ -91,15 +107,44 @@ class ImportDataUsecase {
             'Created IntakeEntity: ${intake.id} - ${intake.meal.name} - ${intake.dateTime}');
 
         await _addIntakeUsecase.addIntake(intake);
+        await _updateTrackedDay(intake, date);
         imported++;
-        developer.log('Successfully added intake to database');
       }
 
       developer.log(
           'Import completed successfully. Imported: $imported, Skipped: $skipped');
+
+      // Add this at the end of the import process
+      locator<DiaryBloc>().add(const LoadDiaryYearEvent());
+      locator<CalendarDayBloc>().add(LoadCalendarDayEvent(DateTime.now()));
+      locator<HomeBloc>().add(const LoadItemsEvent());
     } catch (e, stackTrace) {
       developer.log('Error during import: $e\n$stackTrace');
       rethrow;
     }
+  }
+
+  Future<void> _updateTrackedDay(
+      IntakeEntity intakeEntity, DateTime day) async {
+    final hasTrackedDay = await _addTrackedDayUsecase.hasTrackedDay(day);
+    if (!hasTrackedDay) {
+      final totalKcalGoal = await _getKcalGoalUsecase.getKcalGoal();
+      final totalCarbsGoal =
+          await _getMacroGoalUsecase.getCarbsGoal(totalKcalGoal);
+      final totalFatGoal =
+          await _getMacroGoalUsecase.getFatsGoal(totalKcalGoal);
+      final totalProteinGoal =
+          await _getMacroGoalUsecase.getProteinsGoal(totalKcalGoal);
+
+      await _addTrackedDayUsecase.addNewTrackedDay(
+          day, totalKcalGoal, totalCarbsGoal, totalFatGoal, totalProteinGoal);
+    }
+
+    await _addTrackedDayUsecase.addDayCaloriesTracked(
+        day, intakeEntity.totalKcal);
+    await _addTrackedDayUsecase.addDayMacrosTracked(day,
+        carbsTracked: intakeEntity.totalCarbsGram,
+        fatTracked: intakeEntity.totalFatsGram,
+        proteinTracked: intakeEntity.totalProteinsGram);
   }
 }

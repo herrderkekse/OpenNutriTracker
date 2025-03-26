@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
 import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
+import 'package:opennutritracker/core/domain/usecase/add_tracked_day_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
+import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
+import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:opennutritracker/core/presentation/widgets/app_banner_version.dart';
 import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
 import 'package:opennutritracker/core/utils/app_const.dart';
@@ -548,9 +551,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   if (result != null && result.files.single.path != null) {
                     final importDataUsecase = ImportDataUsecase(
-                      locator<AddIntakeUsecase>(),
-                      locator<IntakeDataSource>(),
-                    );
+                        locator<AddIntakeUsecase>(),
+                        locator<IntakeDataSource>(),
+                        locator<AddTrackedDayUsecase>(),
+                        locator<GetKcalGoalUsecase>(),
+                        locator<GetMacroGoalUsecase>());
                     await importDataUsecase
                         .importFoodData(result.files.single.path!);
 
