@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
-import 'package:opennutritracker/core/domain/usecase/add_intake_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/add_tracked_day_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart';
-import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
 import 'package:opennutritracker/core/presentation/widgets/app_banner_version.dart';
 import 'package:opennutritracker/core/presentation/widgets/disclaimer_dialog.dart';
+import 'package:opennutritracker/core/presentation/widgets/export_dialog.dart';
+import 'package:opennutritracker/core/presentation/widgets/import_dialog.dart';
 import 'package:opennutritracker/core/utils/app_const.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/theme_mode_provider.dart';
@@ -17,17 +13,13 @@ import 'package:opennutritracker/features/diary/presentation/bloc/calendar_day_b
 import 'package:opennutritracker/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:opennutritracker/features/home/presentation/bloc/home_bloc.dart';
 import 'package:opennutritracker/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:opennutritracker/features/settings/domain/usecase/export_data_usecase.dart';
 import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:opennutritracker/features/settings/presentation/widgets/calculations_dialog.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:opennutritracker/features/settings/domain/usecase/import_data_usecase.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -415,265 +407,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showExportDialog(BuildContext context) {
-    DateTime startDate = DateTime.now().subtract(const Duration(days: 30));
-    DateTime endDate = DateTime.now();
-
     showDialog(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(S.of(context).settingsExportDataDialogTitle),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(S.of(context).settingsExportDataDialogContent),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: startDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now(),
-                            );
-                            if (picked != null && picked != startDate) {
-                              setState(() {
-                                startDate = picked;
-                              });
-                            }
-                          },
-                          child: Text(
-                              'Start: ${startDate.toLocal().toString().split(' ')[0]}'),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: endDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now(),
-                            );
-                            if (picked != null && picked != endDate) {
-                              setState(() {
-                                endDate = picked;
-                              });
-                            }
-                          },
-                          child: Text(
-                              'End: ${endDate.toLocal().toString().split(' ')[0]}'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(S.of(context).dialogCancelLabel),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    try {
-                      final exportDataUsecase =
-                          ExportDataUsecase(locator<GetIntakeUsecase>());
-                      final filePath = await exportDataUsecase.exportFoodData(
-                          startDate, endDate);
-
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                        await Share.shareXFiles(
-                          [XFile(filePath)],
-                          subject: 'Food Diary Export',
-                          sharePositionOrigin: Rect.fromLTWH(
-                              0,
-                              0,
-                              MediaQuery.of(context).size.width,
-                              MediaQuery.of(context).size.height / 2),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(S.of(context).errorExportingData),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: Text(S.of(context).dialogOKLabel),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (context) => const ExportDialog(),
     );
   }
 
-  void _showImportDialog(BuildContext context) async {
+  void _showImportDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(S.of(context).settingsImportDataDialogTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(S.of(context).settingsImportDataDialogContent),
-              const SizedBox(height: 16),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(S.of(context).dialogCancelLabel),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['csv'],
-                  );
-
-                  if (result != null && result.files.single.path != null) {
-                    final importDataUsecase = ImportDataUsecase(
-                      locator<AddIntakeUsecase>(),
-                      locator<IntakeDataSource>(),
-                      locator<AddTrackedDayUsecase>(),
-                      locator<GetKcalGoalUsecase>(),
-                      locator<GetMacroGoalUsecase>(),
-                    );
-
-                    // Show loading indicator
-                    if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
-                    }
-
-                    final importResult = await importDataUsecase
-                        .importFoodData(result.files.single.path!);
-
-                    if (context.mounted) {
-                      // Close loading indicator
-                      Navigator.of(context).pop();
-                      // Close import dialog
-                      Navigator.of(context).pop();
-
-                      if (importResult.errors.isNotEmpty) {
-                        // Show error dialog with details
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(context).size.height * 0.8,
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.9,
-                              ),
-                              child: IntrinsicHeight(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        S.of(context).importErrorsTitle,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: SingleChildScrollView(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                '${S.of(context).importSummaryLabel}:\n'
-                                                '${S.of(context).importedLabel}: ${importResult.imported}\n'
-                                                '${S.of(context).skippedLabel}: ${importResult.skipped}\n'
-                                                '${S.of(context).errorsLabel}: ${importResult.errors.length}\n\n'
-                                                '${S.of(context).detailedErrorsLabel}:'),
-                                            const SizedBox(height: 8),
-                                            ...importResult.errors.map(
-                                              (error) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 4),
-                                                child: Text('• $error'),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child:
-                                            Text(S.of(context).dialogOKLabel),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        // Show success message
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                '${S.of(context).importSuccessMessage} '
-                                '(${importResult.imported} ${S.of(context).itemsImportedLabel})'),
-                          ),
-                        );
-                      }
-
-                      // Refresh views
-                      locator<HomeBloc>().add(const LoadItemsEvent());
-                      locator<DiaryBloc>().add(const LoadDiaryYearEvent());
-                      locator<CalendarDayBloc>()
-                          .add(LoadCalendarDayEvent(DateTime.now()));
-                    }
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(S.of(context).errorImportingData),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Text(S.of(context).dialogOKLabel),
-            ),
-          ],
-        );
-      },
+      builder: (context) => const ImportDialog(),
     );
   }
 }
