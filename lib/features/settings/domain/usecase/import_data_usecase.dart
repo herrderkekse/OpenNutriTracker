@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:developer' as developer;
+import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
@@ -11,6 +11,7 @@ import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_usecase.dart'
 import 'package:opennutritracker/core/domain/usecase/get_macro_goal_usecase.dart';
 
 class ImportDataUsecase {
+  final _log = Logger('ImportDataUsecase');
   final AddIntakeUsecase _addIntakeUsecase;
   final IntakeDataSource _intakeDataSource;
   final AddTrackedDayUsecase _addTrackedDayUsecase;
@@ -59,7 +60,7 @@ class ImportDataUsecase {
   Future<({int imported, int skipped})> importFoodData(String filePath) async {
     try {
       final input = File(filePath).readAsStringSync();
-      developer.log('Reading CSV file: $filePath');
+      _log.fine('Reading CSV file: $filePath');
 
       // Split into lines and handle both \r\n and \n line endings
       final lines = input
@@ -83,7 +84,7 @@ class ImportDataUsecase {
         try {
           final row = _parseCSVLine(lines[i]);
           if (row.length != expectedColumnCount) {
-            developer.log('Skipping invalid row $i: incorrect column count');
+            _log.fine('Skipping invalid row $i: incorrect column count');
             skipped++;
             continue;
           }
@@ -95,13 +96,14 @@ class ImportDataUsecase {
             skipped++;
           }
         } catch (e) {
-          developer.log('Error processing row $i: $e');
+          _log.severe('Error processing row $i: $e');
           skipped++;
         }
       }
 
       return (imported: imported, skipped: skipped);
     } catch (e) {
+      _log.severe('Failed to import data: $e');
       throw Exception('Failed to import data: $e');
     }
   }
@@ -186,7 +188,7 @@ class ImportDataUsecase {
     // Check if intake already exists
     final existingIntake = await _intakeDataSource.getIntakeById(importId);
     if (existingIntake != null) {
-      developer.log('Skipping existing intake with ID: $importId');
+      _log.fine('Skipping existing intake with ID: $importId');
       return false;
     }
 
@@ -250,7 +252,7 @@ class ImportDataUsecase {
       unit: row[colUnit].toString(),
     );
 
-    developer.log(
+    _log.fine(
         'Created IntakeEntity: ${intake.id} - ${intake.meal.name} - ${intake.dateTime}');
 
     await _addIntakeUsecase.addIntake(intake);
