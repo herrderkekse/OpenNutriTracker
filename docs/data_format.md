@@ -13,6 +13,8 @@ OpenNutriTracker uses CSV (Comma-Separated Values) format for data import and ex
 - Text fields containing commas must be escaped
 
 ## Column Structure
+The order of columns is fixed and must match the following structure:
+
 | Column                | Type    | Description                                         | Required | Notes                                      |
 | --------------------- | ------- | --------------------------------------------------- | -------- | ------------------------------------------ |
 | ID                    | String  | Unique identifier for the intake                    | Yes      |                                            |

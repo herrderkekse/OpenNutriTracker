@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:developer' as developer;
-import 'package:csv/csv.dart';
 import 'package:opennutritracker/core/data/data_source/intake_data_source.dart';
 import 'package:opennutritracker/core/domain/entity/intake_entity.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
@@ -62,34 +61,33 @@ class ImportDataUsecase {
       final input = File(filePath).readAsStringSync();
       developer.log('Reading CSV file: $filePath');
 
-      final csvConverter = CsvToListConverter(
-        shouldParseNumbers: false,
-        eol: '\n',
-      );
+      // Split into lines and handle both \r\n and \n line endings
+      final lines = input
+          .split(RegExp(r'\r?\n'))
+          .where((line) => line.isNotEmpty)
+          .toList();
 
-      final fields = csvConverter.convert(input);
-      developer.log('Number of rows (including header): ${fields.length}');
-
-      if (fields.isEmpty) {
+      if (lines.isEmpty) {
         throw Exception('CSV file is empty');
       }
 
-      // Validate header row
-      _validateHeaderRow(fields[0]);
+      // Parse header row
+      final headerRow = _parseCSVLine(lines[0]);
+      _validateHeaderRow(headerRow);
 
       int imported = 0;
       int skipped = 0;
 
       // Skip header row
-      for (var i = 1; i < fields.length; i++) {
-        final row = fields[i];
-        if (row.length != expectedColumnCount) {
-          developer.log('Skipping invalid row $i: incorrect column count');
-          skipped++;
-          continue;
-        }
-
+      for (var i = 1; i < lines.length; i++) {
         try {
+          final row = _parseCSVLine(lines[i]);
+          if (row.length != expectedColumnCount) {
+            developer.log('Skipping invalid row $i: incorrect column count');
+            skipped++;
+            continue;
+          }
+
           final importResult = await _processRow(row);
           if (importResult) {
             imported++;
@@ -106,6 +104,36 @@ class ImportDataUsecase {
     } catch (e) {
       throw Exception('Failed to import data: $e');
     }
+  }
+
+  List<String> _parseCSVLine(String line) {
+    List<String> fields = [];
+    bool inQuotes = false;
+    StringBuffer currentField = StringBuffer();
+
+    for (int i = 0; i < line.length; i++) {
+      if (line[i] == '"') {
+        if (inQuotes && i + 1 < line.length && line[i + 1] == '"') {
+          // Handle escaped quotes
+          currentField.write('"');
+          i++;
+        } else {
+          // Toggle quote mode
+          inQuotes = !inQuotes;
+        }
+      } else if (line[i] == ',' && !inQuotes) {
+        // End of field
+        fields.add(currentField.toString());
+        currentField.clear();
+      } else {
+        currentField.write(line[i]);
+      }
+    }
+
+    // Add the last field
+    fields.add(currentField.toString());
+
+    return fields.map((field) => field.trim()).toList();
   }
 
   void _validateHeaderRow(List<dynamic> header) {
@@ -168,8 +196,6 @@ class ImportDataUsecase {
           type.toString().split('.').last.toLowerCase() ==
           row[colMealType].toString().toLowerCase(),
     );
-
-    final isLiquid = row[colIsLiquid].toString().toLowerCase() == 'true';
 
     final intake = IntakeEntity(
       id: importId,
