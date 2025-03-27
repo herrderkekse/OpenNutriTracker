@@ -627,7 +627,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsDistanceLabel":
             MessageLookupByLibrary.simpleMessage("Distance"),
         "settingsExportDataDialogContent": MessageLookupByLibrary.simpleMessage(
-            "Would you like to export your data?"),
+            "For what time span would you like to export your data?"),
         "settingsExportDataDialogTitle":
             MessageLookupByLibrary.simpleMessage("Export Data"),
         "settingsExportDataLabel":
@@ -635,7 +635,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsImperialLabel":
             MessageLookupByLibrary.simpleMessage("Imperial (lbs, ft, oz)"),
         "settingsImportDataDialogContent": MessageLookupByLibrary.simpleMessage(
-            "Select a CSV file to import your data. The file should match the export format."),
+            "Select a CSV file containing your data. The file should match the export format."),
         "settingsImportDataDialogTitle":
             MessageLookupByLibrary.simpleMessage("Import Data"),
         "settingsImportDataLabel":

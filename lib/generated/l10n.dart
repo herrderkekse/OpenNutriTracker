@@ -750,10 +750,10 @@ class S {
     );
   }
 
-  /// `Would you like to export your data?`
+  /// `For what time span would you like to export your data?`
   String get settingsExportDataDialogContent {
     return Intl.message(
-      'Would you like to export your data?',
+      'For what time span would you like to export your data?',
       name: 'settingsExportDataDialogContent',
       desc: '',
       args: [],
@@ -780,10 +780,10 @@ class S {
     );
   }
 
-  /// `Select a CSV file to import your data. The file should match the export format.`
+  /// `Select a CSV file containing your data. The file should match the export format.`
   String get settingsImportDataDialogContent {
     return Intl.message(
-      'Select a CSV file to import your data. The file should match the export format.',
+      'Select a CSV file containing your data. The file should match the export format.',
       name: 'settingsImportDataDialogContent',
       desc: '',
       args: [],
