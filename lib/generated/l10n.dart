@@ -4150,6 +4150,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Import Errors`
+  String get importErrorsTitle {
+    return Intl.message(
+      'Import Errors',
+      name: 'importErrorsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import Summary`
+  String get importSummaryLabel {
+    return Intl.message(
+      'Import Summary',
+      name: 'importSummaryLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Imported`
+  String get importedLabel {
+    return Intl.message(
+      'Imported',
+      name: 'importedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skipped`
+  String get skippedLabel {
+    return Intl.message(
+      'Skipped',
+      name: 'skippedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Errors`
+  String get errorsLabel {
+    return Intl.message(
+      'Errors',
+      name: 'errorsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Detailed Errors`
+  String get detailedErrorsLabel {
+    return Intl.message(
+      'Detailed Errors',
+      name: 'detailedErrorsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `items imported`
+  String get itemsImportedLabel {
+    return Intl.message(
+      'items imported',
+      name: 'itemsImportedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import completed successfully`
+  String get importSuccessMessage {
+    return Intl.message(
+      'Import completed successfully',
+      name: 'importSuccessMessage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

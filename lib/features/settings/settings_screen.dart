@@ -536,9 +536,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: Text(S.of(context).dialogCancelLabel),
             ),
             TextButton(
@@ -551,22 +549,110 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   if (result != null && result.files.single.path != null) {
                     final importDataUsecase = ImportDataUsecase(
-                        locator<AddIntakeUsecase>(),
-                        locator<IntakeDataSource>(),
-                        locator<AddTrackedDayUsecase>(),
-                        locator<GetKcalGoalUsecase>(),
-                        locator<GetMacroGoalUsecase>());
-                    await importDataUsecase
+                      locator<AddIntakeUsecase>(),
+                      locator<IntakeDataSource>(),
+                      locator<AddTrackedDayUsecase>(),
+                      locator<GetKcalGoalUsecase>(),
+                      locator<GetMacroGoalUsecase>(),
+                    );
+
+                    // Show loading indicator
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    final importResult = await importDataUsecase
                         .importFoodData(result.files.single.path!);
 
                     if (context.mounted) {
+                      // Close loading indicator
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(S.of(context).successImportingData),
-                        ),
-                      );
-                      // Refresh both Home and Diary pages
+                      // Close import dialog
+                      Navigator.of(context).pop();
+
+                      if (importResult.errors.isNotEmpty) {
+                        // Show error dialog with details
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.9,
+                              ),
+                              child: IntrinsicHeight(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Text(
+                                        S.of(context).importErrorsTitle,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: SingleChildScrollView(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                '${S.of(context).importSummaryLabel}:\n'
+                                                '${S.of(context).importedLabel}: ${importResult.imported}\n'
+                                                '${S.of(context).skippedLabel}: ${importResult.skipped}\n'
+                                                '${S.of(context).errorsLabel}: ${importResult.errors.length}\n\n'
+                                                '${S.of(context).detailedErrorsLabel}:'),
+                                            const SizedBox(height: 8),
+                                            ...importResult.errors.map(
+                                              (error) => Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 4),
+                                                child: Text('• $error'),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child:
+                                            Text(S.of(context).dialogOKLabel),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                '${S.of(context).importSuccessMessage} '
+                                '(${importResult.imported} ${S.of(context).itemsImportedLabel})'),
+                          ),
+                        );
+                      }
+
+                      // Refresh views
                       locator<HomeBloc>().add(const LoadItemsEvent());
                       locator<DiaryBloc>().add(const LoadDiaryYearEvent());
                       locator<CalendarDayBloc>()

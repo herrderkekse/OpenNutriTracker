@@ -57,34 +57,40 @@ class ImportDataUsecase {
     this._getMacroGoalUsecase,
   );
 
-  Future<({int imported, int skipped})> importFoodData(String filePath) async {
+  Future<({int imported, int skipped, List<String> errors})> importFoodData(
+      String filePath) async {
+    final errors = <String>[];
     try {
-      final input = File(filePath).readAsStringSync();
+      if (!await _isValidFileSize(filePath)) {
+        throw Exception('File size exceeds maximum limit of 10MB');
+      }
+
+      final input = await File(filePath).readAsString();
       _log.fine('Reading CSV file: $filePath');
 
-      // Split into lines and handle both \r\n and \n line endings
+      // Filter out empty lines first
       final lines = input
           .split(RegExp(r'\r?\n'))
-          .where((line) => line.isNotEmpty)
+          .where((line) => line.trim().isNotEmpty)
           .toList();
 
       if (lines.isEmpty) {
         throw Exception('CSV file is empty');
       }
 
-      // Parse header row
       final headerRow = _parseCSVLine(lines[0]);
       _validateHeaderRow(headerRow);
 
       int imported = 0;
       int skipped = 0;
 
-      // Skip header row
+      // Process data rows (skip header)
       for (var i = 1; i < lines.length; i++) {
         try {
           final row = _parseCSVLine(lines[i]);
-          if (row.length != expectedColumnCount) {
-            _log.fine('Skipping invalid row $i: incorrect column count');
+          if (!_isValidRow(row)) {
+            // header is row 0
+            errors.add('Row $i: Invalid data format');
             skipped++;
             continue;
           }
@@ -96,15 +102,17 @@ class ImportDataUsecase {
             skipped++;
           }
         } catch (e) {
-          _log.severe('Error processing row $i: $e');
+          errors.add('Row ${i + 1}: ${e.toString()}');
+          _log.severe('Error processing row ${i + 1}: $e');
           skipped++;
         }
       }
 
-      return (imported: imported, skipped: skipped);
+      return (imported: imported, skipped: skipped, errors: errors);
     } catch (e) {
       _log.severe('Failed to import data: $e');
-      throw Exception('Failed to import data: $e');
+      errors.add(e.toString());
+      return (imported: 0, skipped: 0, errors: errors);
     }
   }
 
@@ -297,5 +305,39 @@ class ImportDataUsecase {
       default:
         return MealSourceEntity.custom;
     }
+  }
+
+  Future<bool> _isValidFileSize(String path) async {
+    final file = File(path);
+    final size = await file.length();
+    //somewhat arbitrary limit, but too large files may cause issues
+    //TODO: idealiy implement pagination or streaming
+    return size <= 10 * 1024 * 1024; // 10MB limit
+  }
+
+  bool _isValidRow(List<String> row) {
+    if (row.length != expectedColumnCount) return false;
+
+    // Validate date
+    try {
+      final date = DateTime.parse(row[colDate].trim());
+      if (date.isAfter(DateTime.now())) return false;
+    } catch (_) {
+      return false;
+    }
+
+    // Validate numeric values
+    for (final col in [
+      colAmount,
+      colEnergyKcal100,
+      colCarbs100,
+      colFat100,
+      colProteins100
+    ]) {
+      final value = double.tryParse(row[col]);
+      if (value == null || value < 0) return false;
+    }
+
+    return true;
   }
 }

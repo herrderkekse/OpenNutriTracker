@@ -409,5 +409,13 @@
   "paSkiingGeneralDesc": "general",
   "paSnowShovingModerate": "snow shoveling",
   "paSnowShovingModerateDesc": "by hand, moderate effort",
-  "errorExportingData": "Error while exporting data"
+  "errorExportingData": "Error while exporting data",
+  "importErrorsTitle": "Import Errors",
+  "importSummaryLabel": "Import Summary",
+  "importedLabel": "Imported",
+  "skippedLabel": "Skipped",
+  "errorsLabel": "Errors",
+  "detailedErrorsLabel": "Detailed Errors",
+  "itemsImportedLabel": "items imported",
+  "importSuccessMessage": "Import completed successfully"
 }

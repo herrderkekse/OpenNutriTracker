@@ -103,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Do want to delete the selected item?"),
         "deleteTimeDialogTitle":
             MessageLookupByLibrary.simpleMessage("Delete Item?"),
+        "detailedErrorsLabel":
+            MessageLookupByLibrary.simpleMessage("Detailed Errors"),
         "dialogCancelLabel": MessageLookupByLibrary.simpleMessage("CANCEL"),
         "dialogCopyLabel":
             MessageLookupByLibrary.simpleMessage("COPY TO TODAY"),
@@ -134,6 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Error while opening email app"),
         "errorProductNotFound":
             MessageLookupByLibrary.simpleMessage("Product not found"),
+        "errorsLabel": MessageLookupByLibrary.simpleMessage("Errors"),
         "fatLabel": MessageLookupByLibrary.simpleMessage("fat"),
         "fiberLabel": MessageLookupByLibrary.simpleMessage("fiber"),
         "flOzUnit": MessageLookupByLibrary.simpleMessage("fl.oz"),
@@ -150,6 +153,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "gramUnit": MessageLookupByLibrary.simpleMessage("g"),
         "heightLabel": MessageLookupByLibrary.simpleMessage("Height"),
         "homeLabel": MessageLookupByLibrary.simpleMessage("Home"),
+        "importErrorsTitle":
+            MessageLookupByLibrary.simpleMessage("Import Errors"),
+        "importSuccessMessage": MessageLookupByLibrary.simpleMessage(
+            "Import completed successfully"),
+        "importSummaryLabel":
+            MessageLookupByLibrary.simpleMessage("Import Summary"),
+        "importedLabel": MessageLookupByLibrary.simpleMessage("Imported"),
         "infoAddedActivityLabel":
             MessageLookupByLibrary.simpleMessage("Added new activity"),
         "infoAddedIntakeLabel":
@@ -158,6 +168,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Item deleted"),
         "itemUpdatedSnackbar":
             MessageLookupByLibrary.simpleMessage("Item updated"),
+        "itemsImportedLabel":
+            MessageLookupByLibrary.simpleMessage("items imported"),
         "kcalLabel": MessageLookupByLibrary.simpleMessage("kcal"),
         "kcalLeftLabel": MessageLookupByLibrary.simpleMessage("kcal left"),
         "kgLabel": MessageLookupByLibrary.simpleMessage("kg"),
@@ -661,6 +673,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("System default"),
         "settingsUnitsLabel": MessageLookupByLibrary.simpleMessage("Units"),
         "settingsVolumeLabel": MessageLookupByLibrary.simpleMessage("Volume"),
+        "skippedLabel": MessageLookupByLibrary.simpleMessage("Skipped"),
         "snackExample": MessageLookupByLibrary.simpleMessage(
             "e.g. apple, ice cream, chocolate ..."),
         "snackLabel": MessageLookupByLibrary.simpleMessage("Snack"),

@@ -51,6 +51,7 @@ The order of columns is fixed and must match the following structure:
 ```
 
 ## Import Requirements
+Invalid rows will be skipped during import and an error message will be displayed. The header Row is counted as row 0.
 - File must be in CSV format
 - Must include header row matching export format
 - All required fields must be present
@@ -59,6 +60,7 @@ The order of columns is fixed and must match the following structure:
 - Source must be one of: OFF, FDC, or CUSTOM
 - Boolean values must be "true" or "false"
 - Nutritional values are provided per 100g for solid foods and per 100ml for liquid foods
+
 
 ## Notes
 - Total values (calories, carbs, fats, proteins) are optional as they can be calculated from per 100g/ml values
